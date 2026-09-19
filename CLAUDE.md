@@ -31,6 +31,16 @@ npx firebase-tools deploy --only hosting --account <email>   # target a specific
 
 This repo's Firebase project (`daniel-vitaltrainer`) is managed under the `nimmdaniel@gmail.com` account, not the account that's usually logged in by default — always pass `--account nimmdaniel@gmail.com` explicitly for `firebase`/`firebase-tools` commands here rather than relying on whichever account happens to be active.
 
+### Contact form (GAS)
+
+`gas/contact-form/` is a clasp-managed Apps Script project (account `nimmdaniel`, i.e. `clasp <cmd> -u nimmdaniel`), linked to the same GCP project as Firebase (`daniel-vitaltrainer`). `Code.gs` exposes `doPost` (sends the submitted fields via `MailApp.sendEmail` straight to `nimmdaniel@gmail.com`, no storage) and `doGet` (friendly plain-text response instead of a Google error). The deployed web app URL is hardcoded as the `<form action>` in `src/index.html` — after pushing code changes, redeploy with `clasp update-deployment -u nimmdaniel <deploymentId>` (see `gas/contact-form/.clasp.json` / `clasp list-deployments -u nimmdaniel` for the current deployment id) rather than creating a new deployment, so the URL in `index.html` keeps working.
+
+A GCP-linked (non-default) Apps Script project needs its OAuth consent screen published (`Testing` → `In production`) before anonymous `ANYONE_ANONYMOUS` web app access works — expect a propagation delay of several minutes after any such change, surfacing as a Google Drive-style "Zugriff verweigert" page instead of the script's actual response.
+
+### Service account (future Firestore/admin use)
+
+A Firebase Admin service account key for `daniel-vitaltrainer` lives at `~/.env/vitaltrainer-service-account.json` (referenced from `~/.env/vitaltrainer.env`, following this machine's convention of centralizing service-account keys under `~/.env/` rather than inside any repo — see e.g. `core4.env`/`core4-service-account.json`). Not currently used by any code here; kept for when Firestore rules or another webapp gets added to this GCP project. Never place a copy of this key inside the repo itself.
+
 ## Architecture
 
 - `src/` is the only source of truth — `index.html`, `styles.css`, `app.js`, `assets/hero.png`.
