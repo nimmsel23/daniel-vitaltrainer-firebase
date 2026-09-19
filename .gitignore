@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.bak
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
+.DS_Store
