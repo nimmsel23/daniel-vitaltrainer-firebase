@@ -9,7 +9,7 @@ await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 await cp(source, output, { recursive: true });
 
-for (const required of ["index.html", "styles.css", "app.js", "assets/hero.png"]) {
+for (const required of ["index.html", "vitalos.html", "styles.css", "app.js", "assets/hero.png"]) {
   await stat(resolve(output, required));
 }
 
