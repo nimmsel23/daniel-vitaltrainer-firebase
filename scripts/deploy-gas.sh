@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # GAS-Kontaktformular deployen: clasp push + update-deployment.
-# Genutzt vom pre-push-Hook (lokal) und von .github/workflows/deploy-gas.yml (CI).
+# Genutzt von .github/workflows/deploy-gas.yml (CI); lokal manuell aufrufbar.
 # Die Deployment-ID steht als Webapp-URL in src/index.html (einzige Quelle der Wahrheit).
 set -euo pipefail
 

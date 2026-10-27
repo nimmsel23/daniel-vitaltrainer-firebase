@@ -37,10 +37,10 @@ This repo's Firebase project (`daniel-vitaltrainer`) is managed under the `nimmd
 
 A GCP-linked (non-default) Apps Script project needs its OAuth consent screen published (`Testing` → `In production`) before anonymous `ANYONE_ANONYMOUS` web app access works — expect a propagation delay of several minutes after any such change, surfacing as a Google Drive-style "Zugriff verweigert" page instead of the script's actual response.
 
-### Hooks & CI (laptopfreies Deployen)
+### CI (laptopfreies Deployen)
 
-- `.githooks/` (aktivieren pro Clone mit `npm run hooks:install`): `pre-commit` blockt Keys/Secrets, prüft JS-Syntax und baut bei `src/`/`scripts/`-Änderungen; `pre-push` ruft bei Änderungen unter `gas/` `scripts/deploy-gas.sh` auf (Überspringen: `SKIP_GAS_DEPLOY=1 git push`). Läuft nur lokal – bei Pushes aus Claude/ChatGPT web greift die CI.
-- `scripts/deploy-gas.sh`: `clasp push` + `update-deployment`; die Deployment-ID wird aus der Webapp-URL in `src/index.html` gelesen.
+- Keine lokalen Git-Hooks: Prüfungen und Deploys laufen in der CI (`check.yml`, `deploy*.yml`). Secrets/Keys deshalb nie committen – es gibt keine lokale Sperre und im Free-Plan keinen GitHub-Push-Schutz für private Repos.
+- `scripts/deploy-gas.sh` (von `deploy-gas.yml` genutzt, auch lokal aufrufbar): `clasp push` + `update-deployment`; die Deployment-ID wird aus der Webapp-URL in `src/index.html` gelesen.
 - `.github/workflows/`: `deploy.yml` (Push auf `main` mit Änderungen in `src/`, `scripts/`, `firebase.json` → Firebase Hosting live), `deploy-gas.yml` (Änderungen in `gas/` → clasp), `preview.yml` (PR → Preview-Channel `pr-<n>`, 7 Tage).
 - `check.yml` (jeder PR/Push: Syntax + `npm run check` = Link-/Anker-Check + Build) und `deploy.yml`/`preview.yml` führen vor dem Deploy `npm run check` aus. Branch-Schutz auf `main` ist im Free-Plan für private Repos nicht verfügbar (403) – nur mit GitHub Pro oder öffentlichem Repo möglich.
 - `sync-from-gpt.yml` (täglich + manuell): `Vitaltrainer/website/dist` (ChatGPT web arbeitet dort) ist eine 1:1-Kopie von `src/`; weicht sie ab, wird `src/` per `rsync` aktualisiert und PR `sync/gpt` geöffnet. `scripts/check-invariants.mjs` (Teil von `npm run check`) fängt verlorene Pflichtbausteine ab. Braucht Secret `SYNC_TOKEN` (fine-grained PAT: Vitaltrainer Contents:read; dieses Repo Contents+Pull requests:write).
