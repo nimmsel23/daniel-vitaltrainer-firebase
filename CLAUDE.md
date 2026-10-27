@@ -43,6 +43,7 @@ A GCP-linked (non-default) Apps Script project needs its OAuth consent screen pu
 - `scripts/deploy-gas.sh`: `clasp push` + `update-deployment`; die Deployment-ID wird aus der Webapp-URL in `src/index.html` gelesen.
 - `.github/workflows/`: `deploy.yml` (Push auf `main` mit Änderungen in `src/`, `scripts/`, `firebase.json` → Firebase Hosting live), `deploy-gas.yml` (Änderungen in `gas/` → clasp), `preview.yml` (PR → Preview-Channel `pr-<n>`, 7 Tage).
 - `check.yml` (jeder PR/Push: Syntax + `npm run check` = Link-/Anker-Check + Build) und `deploy.yml`/`preview.yml` führen vor dem Deploy `npm run check` aus. Branch-Schutz auf `main` ist im Free-Plan für private Repos nicht verfügbar (403) – nur mit GitHub Pro oder öffentlichem Repo möglich.
+- `sync-from-gpt.yml` (täglich + manuell): `Vitaltrainer/website/dist` (ChatGPT web arbeitet dort) ist eine 1:1-Kopie von `src/`; weicht sie ab, wird `src/` per `rsync` aktualisiert und PR `sync/gpt` geöffnet. `scripts/check-invariants.mjs` (Teil von `npm run check`) fängt verlorene Pflichtbausteine ab. Braucht Secret `SYNC_TOKEN` (fine-grained PAT: Vitaltrainer Contents:read; dieses Repo Contents+Pull requests:write).
 - Repo-Secrets: `FIREBASE_SERVICE_ACCOUNT` (JSON-Key eines dedizierten Deploy-Service-Accounts, nicht der Admin-SDK-Key) und `CLASPRC_JSON` (nur der `nimmdaniel`-Eintrag aus `~/.clasprc.json`).
 
 ### Service account (future Firestore/admin use)

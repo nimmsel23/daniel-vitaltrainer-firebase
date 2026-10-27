@@ -1,0 +1,57 @@
+name: Sync ChatGPT-Stand (Vitaltrainer/website/dist)
+
+# website/dist im Vault-Repo ist eine 1:1-Kopie von src/ (build.mjs kopiert nur).
+# Hat ChatGPT dort etwas committet, wird src/ aktualisiert und ein PR geöffnet:
+# der PR bekommt Check (inkl. Invarianten) und Preview, nach dem Merge deployt deploy.yml.
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # täglich 05:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: sync-from-gpt
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.SYNC_TOKEN }}
+    steps:
+      - name: Token vorhanden?
+        run: test -n "$GH_TOKEN" || { echo "::error::Secret SYNC_TOKEN fehlt"; exit 1; }
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ secrets.SYNC_TOKEN }}
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: nimmsel23/Vitaltrainer
+          ref: main
+          path: vault
+          token: ${{ secrets.SYNC_TOKEN }}
+          sparse-checkout: website/dist
+
+      - name: dist -> src übernehmen
+        run: rsync -a --delete --exclude='*.bak' vault/website/dist/ src/
+
+      - name: PR öffnen/aktualisieren
+        run: |
+          if [ -z "$(git status --porcelain -- src)" ]; then
+            echo "Kein Unterschied zu website/dist – nichts zu tun."; exit 0
+          fi
+          src_sha=$(git -C vault rev-parse --short HEAD)
+          git config user.name "gpt-sync"
+          git config user.email "gpt-sync@users.noreply.github.com"
+          git switch -c sync/gpt
+          git add -A src
+          git commit -q -m "Sync: ChatGPT-Stand aus Vitaltrainer/website/dist ($src_sha)"
+          git push --force origin sync/gpt
+          body="Automatischer Sync von \`Vitaltrainer/website/dist@$src_sha\` nach \`src/\`. Der Check (inkl. Invarianten: Formular, Consent, Fußzeile, selbst gehostete Fonts) muss grün sein; fehlen Bausteine, bitte im Branch \`sync/gpt\` nachziehen. Nach dem Merge deployt \`deploy.yml\` live."
+          gh pr create --base main --head sync/gpt --title "Sync: ChatGPT-Stand ($src_sha)" --body "$body" \
+            || gh pr edit sync/gpt --title "Sync: ChatGPT-Stand ($src_sha)" --body "$body"
