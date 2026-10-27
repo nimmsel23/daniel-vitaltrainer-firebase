@@ -1,4 +1,4 @@
-const RECIPIENT = "nimmdaniel@gmail.com";
+const RECIPIENT = "nimmdaniel+kontaktformular@gmail.com";
 
 function doGet() {
   return ContentService
