@@ -1,0 +1,10 @@
+[Unit]
+Description=LLM-Doctor wöchentlich (nur aktiv, wenn der Sync-PR rot ist)
+
+[Timer]
+OnCalendar=Mon *-*-* 07:00
+Persistent=true
+RandomizedDelaySec=15min
+
+[Install]
+WantedBy=timers.target

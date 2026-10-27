@@ -1,0 +1,13 @@
+[Unit]
+Description=LLM-Doctor für den Sync-PR der Vitaltrainer-Website (claude -> codex -> agy)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/Vitaltraining/daniel-vitaltrainer-firebase/scripts/doctor.sh
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+Nice=15
+IOSchedulingClass=idle
+MemoryMax=3G
+TimeoutStartSec=45min
