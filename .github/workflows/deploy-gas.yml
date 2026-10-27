@@ -2,7 +2,7 @@ name: Deploy GAS Kontaktformular
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "gas/**"
       - "scripts/deploy-gas.sh"

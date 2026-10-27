@@ -2,7 +2,7 @@ name: Deploy Firebase Hosting
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "src/**"
       - "scripts/**"
