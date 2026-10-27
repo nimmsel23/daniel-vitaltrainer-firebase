@@ -1,0 +1,36 @@
+name: Auto-Merge (grüner Check)
+
+# Sync-PRs (sync/gpt) und Dependabot-PRs mergen sich, sobald der Check grün ist.
+# Rot bleibt liegen (LLM-Doctor / von Hand). Läuft als workflow_run im Kontext von main
+# und checkt nie PR-Code aus. Der Merge nutzt SYNC_TOKEN statt GITHUB_TOKEN, weil ein
+# Merge mit GITHUB_TOKEN deploy.yml nicht auslösen würde.
+
+on:
+  workflow_run:
+    workflows: [Check]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  merge:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      (github.event.workflow_run.head_branch == 'sync/gpt' ||
+       startsWith(github.event.workflow_run.head_branch, 'dependabot/'))
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.SYNC_TOKEN }}
+      REPO: ${{ github.repository }}
+      BRANCH: ${{ github.event.workflow_run.head_branch }}
+      SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - name: Mergen, wenn der grüne Lauf dem aktuellen PR-Stand entspricht
+        run: |
+          test -n "$GH_TOKEN" || { echo "::error::Secret SYNC_TOKEN fehlt"; exit 1; }
+          pr=$(gh pr list -R "$REPO" --head "$BRANCH" --state open --json number,headRefOid \
+            --jq ".[] | select(.headRefOid == \"$SHA\") | .number")
+          [ -n "$pr" ] || { echo "Kein offener PR mit Stand $SHA (veraltet oder schon gemergt)."; exit 0; }
+          gh pr merge "$pr" -R "$REPO" --squash --delete-branch
