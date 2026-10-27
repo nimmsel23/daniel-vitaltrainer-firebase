@@ -4,3 +4,17 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/Vienna
+    # frisch veröffentlichte Versionen erst nach einer Woche vorschlagen (Supply-Chain-Schutz)
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies
+    groups:
+      actions:
+        patterns: ["*"]
