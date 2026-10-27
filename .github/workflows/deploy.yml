@@ -36,6 +36,6 @@ jobs:
           key="$RUNNER_TEMP/firebase-key.json"
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$key"
           GOOGLE_APPLICATION_CREDENTIALS="$key" \
-            npx --yes firebase-tools@15.34.1 deploy --only hosting \
+            npx --yes firebase-tools@latest deploy --only hosting \
             --project daniel-vitaltrainer --non-interactive
           rm -f "$key"
