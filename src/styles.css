@@ -30,3 +30,13 @@ body.page .nav{position:static;background:var(--navy)}
 .legal h2{font:700 1.25rem 'Manrope',sans-serif;color:var(--ink);margin:2.5rem 0 1rem}
 .legal p,.legal address{color:var(--muted);font-size:1rem;line-height:1.75;font-style:normal;margin:0 0 1rem}
 .legal a.inline{color:#159d8d;border-bottom:1px solid currentColor}
+
+/* Cookie-/Analytics-Einwilligung */
+.consent{position:fixed;left:1rem;bottom:1rem;z-index:50;max-width:340px;padding:.95rem 1.05rem;border:1px solid #ffffff26;border-radius:14px;background:rgba(6,26,45,.96);color:#d3e2e6;font-size:.84rem;line-height:1.5;box-shadow:0 12px 40px rgba(0,0,0,.28)}
+.consent p{margin:0 0 .8rem}
+.consent a{color:var(--aqua);border-bottom:1px solid currentColor}
+.consent div{display:flex;gap:.5rem}
+.consent button{flex:1;padding:.5rem .8rem;border:1px solid #ffffff40;border-radius:999px;background:transparent;color:white;font:inherit;font-weight:600;cursor:pointer}
+.consent button:hover{background:#ffffff1a}
+.consent-link{background:none;border:0;padding:0;color:#159d8d;font:inherit;border-bottom:1px solid currentColor;cursor:pointer}
+@media(max-width:480px){.consent{left:.6rem;right:.6rem;bottom:.6rem;max-width:none}}

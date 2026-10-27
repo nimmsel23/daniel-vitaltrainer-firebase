@@ -11,6 +11,7 @@
     "build": "node scripts/build.mjs",
     "preview": "node scripts/serve.mjs dist",
     "deploy": "npm run build && npx firebase-tools deploy --only hosting",
-    "hooks:install": "git config core.hooksPath .githooks"
+    "hooks:install": "git config core.hooksPath .githooks",
+    "check": "node scripts/check-links.mjs && npm run build"
   }
 }
