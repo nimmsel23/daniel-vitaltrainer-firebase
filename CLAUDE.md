@@ -37,6 +37,13 @@ This repo's Firebase project (`daniel-vitaltrainer`) is managed under the `nimmd
 
 A GCP-linked (non-default) Apps Script project needs its OAuth consent screen published (`Testing` → `In production`) before anonymous `ANYONE_ANONYMOUS` web app access works — expect a propagation delay of several minutes after any such change, surfacing as a Google Drive-style "Zugriff verweigert" page instead of the script's actual response.
 
+### Hooks & CI (laptopfreies Deployen)
+
+- `.githooks/` (aktivieren pro Clone mit `npm run hooks:install`): `pre-commit` blockt Keys/Secrets, prüft JS-Syntax und baut bei `src/`/`scripts/`-Änderungen; `pre-push` ruft bei Änderungen unter `gas/` `scripts/deploy-gas.sh` auf (Überspringen: `SKIP_GAS_DEPLOY=1 git push`). Läuft nur lokal – bei Pushes aus Claude/ChatGPT web greift die CI.
+- `scripts/deploy-gas.sh`: `clasp push` + `update-deployment`; die Deployment-ID wird aus der Webapp-URL in `src/index.html` gelesen.
+- `.github/workflows/`: `deploy.yml` (Push auf `master` mit Änderungen in `src/`, `scripts/`, `firebase.json` → Firebase Hosting live), `deploy-gas.yml` (Änderungen in `gas/` → clasp), `preview.yml` (PR → Preview-Channel `pr-<n>`, 7 Tage).
+- Repo-Secrets: `FIREBASE_SERVICE_ACCOUNT` (JSON-Key eines dedizierten Deploy-Service-Accounts, nicht der Admin-SDK-Key) und `CLASPRC_JSON` (nur der `nimmdaniel`-Eintrag aus `~/.clasprc.json`).
+
 ### Service account (future Firestore/admin use)
 
 A Firebase Admin service account key for `daniel-vitaltrainer` lives at `~/.env/vitaltrainer-service-account.json` (referenced from `~/.env/vitaltrainer.env`, following this machine's convention of centralizing service-account keys under `~/.env/` rather than inside any repo — see e.g. `core4.env`/`core4-service-account.json`). Not currently used by any code here; kept for when Firestore rules or another webapp gets added to this GCP project. Never place a copy of this key inside the repo itself.

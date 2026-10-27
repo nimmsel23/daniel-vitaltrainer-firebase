@@ -1,0 +1,37 @@
+name: Preview Firebase Hosting
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "firebase.json"
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    # Fork-PRs bekommen keine Secrets
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build
+        run: npm run build
+
+      - name: Preview-Channel deployen
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          key="$RUNNER_TEMP/firebase-key.json"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$key"
+          GOOGLE_APPLICATION_CREDENTIALS="$key" \
+            npx --yes firebase-tools@15.34.1 hosting:channel:deploy "pr-${{ github.event.number }}" \
+            --expires 7d --project daniel-vitaltrainer --non-interactive | tee "$RUNNER_TEMP/out.txt"
+          rm -f "$key"
+          grep -Eo 'https://[^ ]+\.web\.app[^ ]*' "$RUNNER_TEMP/out.txt" | head -n1 | sed 's/^/Preview: /' >> "$GITHUB_STEP_SUMMARY"

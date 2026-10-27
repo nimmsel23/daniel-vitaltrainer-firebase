@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# pre-commit: keine Schlüssel/Secrets einchecken, JS-Syntax prüfen, Build muss laufen.
+set -euo pipefail
+
+staged="$(git diff --cached --name-only --diff-filter=ACM)"
+[ -z "$staged" ] && exit 0
+
+# 1) Secrets / Service-Account-Keys
+if echo "$staged" | grep -Eq '(^|/)(\.env[^/]*|.*service-account.*\.json|daniel-vitaltrainer-[^/]*\.json|\.firebaserc)$'; then
+  echo "pre-commit: Datei sieht nach Secret/Key aus:" >&2
+  echo "$staged" | grep -E '(^|/)(\.env[^/]*|.*service-account.*\.json|daniel-vitaltrainer-[^/]*\.json|\.firebaserc)$' >&2
+  exit 1
+fi
+if git diff --cached -U0 | grep -Eq -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|"private_key_id"|AIza[0-9A-Za-z_-]{35}.*(secret|private)'; then
+  echo "pre-commit: privater Schlüssel im Diff gefunden." >&2
+  exit 1
+fi
+
+# 2) Syntax: .js direkt, .gs über temporäre .js-Kopie
+tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
+while IFS= read -r f; do
+  case "$f" in
+    *.js|*.mjs) node --check "$f" ;;
+    *.gs) cp "$f" "$tmp/check.js"; node --check "$tmp/check.js" ;;
+  esac
+done <<< "$staged"
+
+# 3) Build muss durchlaufen, wenn src/ oder scripts/ betroffen sind
+if echo "$staged" | grep -Eq '^(src|scripts)/'; then
+  npm run --silent build >/dev/null
+fi
