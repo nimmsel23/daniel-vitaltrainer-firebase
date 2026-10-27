@@ -42,6 +42,7 @@ A GCP-linked (non-default) Apps Script project needs its OAuth consent screen pu
 - `.githooks/` (aktivieren pro Clone mit `npm run hooks:install`): `pre-commit` blockt Keys/Secrets, prüft JS-Syntax und baut bei `src/`/`scripts/`-Änderungen; `pre-push` ruft bei Änderungen unter `gas/` `scripts/deploy-gas.sh` auf (Überspringen: `SKIP_GAS_DEPLOY=1 git push`). Läuft nur lokal – bei Pushes aus Claude/ChatGPT web greift die CI.
 - `scripts/deploy-gas.sh`: `clasp push` + `update-deployment`; die Deployment-ID wird aus der Webapp-URL in `src/index.html` gelesen.
 - `.github/workflows/`: `deploy.yml` (Push auf `master` mit Änderungen in `src/`, `scripts/`, `firebase.json` → Firebase Hosting live), `deploy-gas.yml` (Änderungen in `gas/` → clasp), `preview.yml` (PR → Preview-Channel `pr-<n>`, 7 Tage).
+- `check.yml` (jeder PR/Push: Syntax + `npm run check` = Link-/Anker-Check + Build) und `deploy.yml`/`preview.yml` führen vor dem Deploy `npm run check` aus. Branch-Schutz auf `master` ist im Free-Plan für private Repos nicht verfügbar (403) – nur mit GitHub Pro oder öffentlichem Repo möglich.
 - Repo-Secrets: `FIREBASE_SERVICE_ACCOUNT` (JSON-Key eines dedizierten Deploy-Service-Accounts, nicht der Admin-SDK-Key) und `CLASPRC_JSON` (nur der `nimmdaniel`-Eintrag aus `~/.clasprc.json`).
 
 ### Service account (future Firestore/admin use)
