@@ -38,7 +38,7 @@ jobs:
           sparse-checkout: website/dist
 
       - name: dist -> src übernehmen
-        run: rsync -a --delete --exclude='*.bak' vault/website/dist/ src/
+        run: rsync -a --delete --exclude='*.bak' --exclude='6pack.html' --exclude='vitalos.html' --exclude='vitalos-store-links.mjs' vault/website/dist/ src/
 
       - name: PR öffnen/aktualisieren
         run: |
