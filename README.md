@@ -23,7 +23,7 @@ npm run build
 npm run preview
 ```
 
-Der fertige Stand liegt anschließend in `dist/`.
+Der fertige Stand liegt anschließend in `dist-firebase/` (nicht zu verwechseln mit `Vitaltrainer/website/dist`, dem ChatGPT-Eingang).
 
 ## Firebase einmalig verbinden
 

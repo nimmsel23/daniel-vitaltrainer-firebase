@@ -10,8 +10,8 @@ A standalone, dependency-free static site (Daniel's Vitaltrainer profile page) d
 
 ```bash
 npm run dev      # serve src/ live at http://localhost:4173
-npm run build    # copy src/ -> dist/, verify required files exist
-npm run preview  # serve the built dist/ at http://localhost:4173
+npm run build    # copy src/ -> dist-firebase/, verify required files exist
+npm run preview  # serve the built dist-firebase/ at http://localhost:4173
 npm run deploy   # build, then firebase-tools deploy --only hosting
 ```
 
@@ -55,9 +55,9 @@ A Firebase Admin service account key for `daniel-vitaltrainer` lives at `~/.env/
 ## Architecture
 
 - `src/` is the only source of truth — `index.html`, `styles.css`, `app.js`, `assets/hero.png`.
-- `scripts/build.mjs` does a straight recursive copy of `src/` into `dist/`, then asserts that `index.html`, `styles.css`, `app.js`, and `assets/hero.png` exist in the output. There is no transformation, minification, or bundling step.
+- `scripts/build.mjs` does a straight recursive copy of `src/` into `dist-firebase/`, then asserts that `index.html`, `styles.css`, `app.js`, and `assets/hero.png` exist in the output. There is no transformation, minification, or bundling step.
 - Fonts (DM Sans, Manrope) sind selbst gehostet: variable `woff2` (Subset latin) in `src/assets/fonts/`, `@font-face` am Anfang von `styles.css`. Keine Verbindung zu Google Fonts – so lassen, sonst wird eine Einwilligung/Erwähnung in `datenschutz.html` nötig.
-- `scripts/serve.mjs` is a minimal static file server (no dependencies) used for both `dev` (serves `src/`) and `preview` (serves `dist/`); it resolves paths against its root directory and rejects any path that escapes it.
-- `firebase.json` points Hosting at `dist/`, sets long-lived cache headers for images/fonts, and sets baseline security headers (`X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) on all responses.
+- `scripts/serve.mjs` is a minimal static file server (no dependencies) used for both `dev` (serves `src/`) and `preview` (serves `dist-firebase/`); it resolves paths against its root directory and rejects any path that escapes it.
+- `firebase.json` points Hosting at `dist-firebase/`, sets long-lived cache headers for images/fonts, and sets baseline security headers (`X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) on all responses.
 - `app.js` only handles the mobile nav toggle (hamburger button + closing the menu on link click) and the contact form's hidden-iframe submit flow — no Firestore or Auth wired in yet.
 - `src/firebase-analytics.js` initializes Firebase Analytics via the Firebase JS SDK loaded straight from `gstatic.com` (no npm dependency, no bundler) — pinned to an exact version (check current with `npm view firebase version` before bumping). `firebaseConfig` there is not a secret (client-side Firebase config is meant to be public); loaded only after consent: `src/consent.js` (on every page) shows the banner and dynamically imports it on "Zustimmen" (choice in `localStorage` key `analytics-consent`). Analytics use is disclosed in `datenschutz.html` — keep that in sync if this changes.
