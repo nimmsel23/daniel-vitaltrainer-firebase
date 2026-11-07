@@ -50,8 +50,9 @@ function fetchRefs(...refs) {
 }
 
 function prFor(branch, base, sha) {
-  const candidates = ghJson(["pr", "list", "-R", repo, "--head", branch, "--base", base, "--state", "open", "--json", "number,headRefName,headRefOid,baseRefName,headRepository,baseRepository,state"]);
-  return candidates.find((p) => p.headRefOid === sha && p.headRepository?.nameWithOwner === repo && p.baseRepository?.nameWithOwner === repo);
+  // "baseRepository" ist kein unterstuetztes gh-JSON-Feld und bei Same-Repo-PRs null -> Match schlaegt fehl.
+  const candidates = ghJson(["pr", "list", "-R", repo, "--head", branch, "--base", base, "--state", "open", "--json", "number,headRefName,headRefOid,baseRefName,headRepository"]);
+  return candidates.find((p) => p.headRefOid === sha && p.baseRefName === base && (p.headRepository?.nameWithOwner ?? repo) === repo);
 }
 
 function sameRepoPullRequest(candidate) {
