@@ -1,8 +1,8 @@
-name: Sync ChatGPT-Stand (Vitaltrainer/website/dist)
+name: Sync ChatGPT-Pakete (Vitaltrainer/website)
 
-# website/dist im Vault-Repo ist eine 1:1-Kopie von src/ (build.mjs kopiert nur).
-# Hat ChatGPT dort etwas committet, wird src/ aktualisiert und ein PR geöffnet:
-# der PR bekommt Check (inkl. Invarianten) und Preview, nach dem Merge deployt deploy.yml.
+# ChatGPT (nimmdaniel) committed nach website/landingpage und website/vitalos-public.
+# website/dist (nimmsel23) liefert nur noch shared Assets (CSS/JS/Fonts), nicht index/vitalos.
+# Import schreibt nach src/landingpage + src/vitalos (+ vitalos.html) und öffnet PR sync/gpt.
 
 on:
   schedule:
@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.SYNC_TOKEN }}
+      GPT_PACKAGES_REQUIRED: "1"
     steps:
       - name: Token vorhanden?
         run: test -n "$GH_TOKEN" || { echo "::error::Secret SYNC_TOKEN fehlt"; exit 1; }
@@ -35,23 +36,37 @@ jobs:
           ref: main
           path: vault
           token: ${{ secrets.SYNC_TOKEN }}
-          sparse-checkout: website/dist
+          sparse-checkout: |
+            website/landingpage
+            website/vitalos-public
+            website/dist
 
-      - name: dist -> src übernehmen
-        run: rsync -a --delete --exclude='*.bak' --exclude='index.html' --exclude='6pack.html' --exclude='vitalos.html' --exclude='vitalos-store-links.mjs' vault/website/dist/ src/
+      - name: Shared Assets aus dist (ohne Seiten-HTML)
+        run: |
+          # kein --delete: sonst würden src/landingpage und src/vitalos vor dem Import weg sein
+          rsync -a \
+            --exclude='*.bak' \
+            --exclude='*.html' \
+            --exclude='vitalos-store-links.mjs' \
+            vault/website/dist/ src/
+
+      - name: Pakete importieren (landingpage + vitalos-public)
+        run: |
+          export GPT_PACKAGES_ROOT="$PWD/vault/website"
+          node scripts/import-gpt-packages.mjs
 
       - name: PR öffnen/aktualisieren
         run: |
           if [ -z "$(git status --porcelain -- src)" ]; then
-            echo "Kein Unterschied zu website/dist – nichts zu tun."; exit 0
+            echo "Kein Unterschied zu den GPT-Paketen – nichts zu tun."; exit 0
           fi
           src_sha=$(git -C vault rev-parse --short HEAD)
           git config user.name "gpt-sync"
           git config user.email "gpt-sync@users.noreply.github.com"
           git switch -c sync/gpt
           git add -A src
-          git commit -q -m "Sync: ChatGPT-Stand aus Vitaltrainer/website/dist ($src_sha)"
+          git commit -q -m "Sync: ChatGPT-Pakete landingpage + vitalos-public ($src_sha)"
           git push --force origin sync/gpt
-          body="Automatischer Sync von \`Vitaltrainer/website/dist@$src_sha\` nach \`src/\`. Der Check (inkl. Invarianten: Formular, Consent, Fußzeile, selbst gehostete Fonts) muss grün sein; fehlen Bausteine, bitte im Branch \`sync/gpt\` nachziehen. Nach dem Merge deployt \`deploy.yml\` live."
-          gh pr create --base main --head sync/gpt --title "Sync: ChatGPT-Stand ($src_sha)" --body "$body" \
-            || gh pr edit sync/gpt --title "Sync: ChatGPT-Stand ($src_sha)" --body "$body"
+          body="Automatischer Sync von \`Vitaltrainer/website/{landingpage,vitalos-public}@$src_sha\` nach \`src/landingpage\` + \`src/vitalos\`. Trainer-\`index.html\` bleibt unangetastet. Check muss grün sein; nach Merge deployt \`deploy.yml\`."
+          gh pr create --base main --head sync/gpt --title "Sync: ChatGPT-Pakete ($src_sha)" --body "$body" \
+            || gh pr edit sync/gpt --title "Sync: ChatGPT-Pakete ($src_sha)" --body "$body"
