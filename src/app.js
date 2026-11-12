@@ -14,22 +14,6 @@ navigation?.querySelectorAll("a").forEach((link) => {
   });
 });
 
-/** Hash-Ziele nach Layout (Fonts/Bilder) ansteuern — sonst landet #angebot oft unter der Nav. */
-function scrollToHash(behavior = "smooth") {
-  const id = decodeURIComponent((location.hash || "").replace(/^#/, ""));
-  if (!id) return;
-  const target = document.getElementById(id);
-  if (!target) return;
-  target.scrollIntoView({ behavior, block: "start" });
-}
-
-window.addEventListener("hashchange", () => scrollToHash("smooth"));
-window.addEventListener("load", () => {
-  if (location.hash) {
-    requestAnimationFrame(() => scrollToHash("auto"));
-  }
-});
-
 const contactForm = document.querySelector("#contact-form");
 const contactTarget = document.querySelector('iframe[name="contact-target"]');
 const contactStatus = contactForm?.querySelector(".contact-form-status");
