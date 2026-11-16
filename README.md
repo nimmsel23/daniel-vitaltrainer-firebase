@@ -2,6 +2,8 @@
 
 Die aktuelle Vitaltrainer-Website als eigenständiges Node-Projekt für Firebase Hosting.
 
+Ein Push auf `nimmsel23/Vitaltrainer` `main` unter `website/landingpage`, `website/vitalos-public` oder `website/dist` sendet `repository_dispatch` (`vitaltrainer-website`). `sync-from-gpt.yml` öffnet dann den PR `sync/gpt`. Ist der Check grün, merged `automerge.yml` (Token `SYNC_TOKEN`) und `deploy.yml` veröffentlicht. Zusätzlich läuft derselbe Sync täglich um 05:00 UTC. Vor dem PR gilt die Sperrliste `PUBLIC_DENYLIST`.
+
 ## Voraussetzungen
 
 - Node.js 20 oder neuer
