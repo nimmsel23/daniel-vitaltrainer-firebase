@@ -23,6 +23,9 @@ const index = await read("index.html");
 if (!index.includes('id="contact-form"')) errors.push("index.html: Kontaktformular #contact-form fehlt");
 if (!/script\.google\.com\/macros\/s\/[^/]+\/exec/.test(index)) errors.push("index.html: GAS-Webapp-URL im Formular fehlt");
 if (/fonts\.(googleapis|gstatic)\.com/.test(await read("styles.css"))) errors.push("styles.css: externe Google Fonts");
+if (!(await read("datenschutz.html")).includes("Data Privacy Framework")) {
+  errors.push("datenschutz.html: Abschnitt Übermittlung in die USA fehlt (Legal-Floor)");
+}
 
 for (const f of ["consent.js", "firebase-analytics.js", "app.js", "assets/hero.png", "assets/fonts/manrope-latin.woff2", "assets/fonts/dm-sans-latin.woff2"]) {
   await readFile(join(src, f)).catch(() => errors.push(`${f} fehlt`));
