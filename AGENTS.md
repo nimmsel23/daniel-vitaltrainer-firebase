@@ -11,7 +11,7 @@ Dieses Repo ist die **Deploy-Quelle** der Vitaltrainer-Website auf Firebase (`da
 | `website/dist` | Shared Assets **und** Trainer-Kern `index.html`, `impressum.html`, `datenschutz.html` | `/`, `/impressum.html`, `/datenschutz.html` |
 | `website/dist/vitalos.html` | wird **nicht** übernommen (kommt aus `vitalos-public`) | — |
 
-`href="/vitalos.html"` in der Trainer-`index.html` wird beim Sync auf `href="/vitalos/"` umgeschrieben. Fehlt im Vault-Datenschutz der Abschnitt „Übermittlung in die USA“, setzt `scripts/apply-legal-floor.mjs` ihn wieder ein. `npm run check` bricht ab, wenn der Abschnitt fehlt.
+`href="/vitalos.html"` in der Trainer-`index.html` wird beim Sync auf `href="/vitalos/"` umgeschrieben. Fehlt im Vault-Datenschutz der Abschnitt „Übermittlung in die USA“, setzt `.github/scripts/apply-legal-floor.mjs` ihn wieder ein. Der Sync-Job bricht ab, wenn der Abschnitt danach fehlt.
 
 `npm run build` / `npm run import:gpt` zieht die Pakete automatisch, wenn sie als Nachbarn liegen (`../landingpage`, `../vitalos-public`) oder via `GPT_PACKAGES_ROOT`. CI: `sync-from-gpt.yml` bei `repository_dispatch` (`vitaltrainer-website`, ausgelöst von einem Push auf `Vitaltrainer` `main`) und weiterhin täglich als Netz. Der PR `sync/gpt` wird von `automerge.yml` gemerged, sobald Check grün ist (`SYNC_TOKEN`, damit `deploy.yml` läuft). Vor dem PR prüft die Sperrliste `PUBLIC_DENYLIST` den Baum `src/`.
 

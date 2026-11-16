@@ -4,7 +4,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const file = resolve(import.meta.dirname, "../src/datenschutz.html");
+const file = resolve(import.meta.dirname, "../../src/datenschutz.html");
 const marker = "Data Privacy Framework";
 let html = await readFile(file, "utf8");
 

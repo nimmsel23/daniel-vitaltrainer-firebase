@@ -65,7 +65,7 @@ jobs:
           done
           # Clean-URL. /vitalos.html selbst kommt aus vitalos-public, nicht aus dist.
           sed -i 's#href="/vitalos.html"#href="/vitalos/"#g' src/index.html
-          node scripts/apply-legal-floor.mjs
+          node .github/scripts/apply-legal-floor.mjs
 
       - name: Pakete importieren (landingpage + vitalos-public)
         run: |
