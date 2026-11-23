@@ -21,7 +21,7 @@ Dieses Repo ist die **Deploy-Quelle** der Vitaltrainer-Website auf Firebase (`da
 - `src/landingpage/` und `src/vitalos/` nicht von Hand gegen den Vault-Stand „zurücksetzen“ — Sync/Import ist SOT für diese Bäume.
 - Pfade absolut halten: `/styles.css`, `/app.js`, `/assets/...`, `/impressum.html`.
 - Auf **Core-Seiten** müssen bleiben: Fußzeile mit Impressum/Datenschutz, `<script type="module" src="/app.js">` und `<script type="module" src="/consent.js">`.
-- Kontaktformular (`#contact-form` + `iframe[name=contact-target]`) nicht entfernen; die Webapp-URL im `action` ist die GAS-Deployment-ID.
+- Kontaktformular (`#contact-form`, gleiche GAS-`action`-URL) nicht entfernen; Double-Opt-in ohne iframe. Die Webapp-URL im `action` ist die GAS-Deployment-ID (`update-deployment`, nicht neu anlegen).
 - Keine externen Ressourcen in Core-Seiten (Schriften unter `/assets/fonts/`), keine Secrets/Keys committen.
 - Vor dem Commit: `npm run check` muss grün sein.
 - Änderungen unter `gas/` werden per CI mit clasp deployt (`scripts/deploy-gas.sh`).

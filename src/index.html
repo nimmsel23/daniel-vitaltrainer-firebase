@@ -103,17 +103,17 @@
       <a class="direct-mail" href="mailto:nimmdaniel@gmail.com">nimmdaniel@gmail.com</a>
 
 
-      <form id="contact-form" class="contact-form" action="https://script.google.com/macros/s/AKfycbxQeetIZ3UjZxh6uBBsFR9e53VtXGbhkPXOy0wbmSj-Y5ham3T1Tq5BhU8_BMP-6b3Irg/exec" method="POST" target="contact-target">
-        <p class="contact-form-note">Oder schreib mir direkt hier – kommt genauso in mein Postfach:</p>
+      <form id="contact-form" class="contact-form" action="https://script.google.com/macros/s/AKfycbxQeetIZ3UjZxh6uBBsFR9e53VtXGbhkPXOy0wbmSj-Y5ham3T1Tq5BhU8_BMP-6b3Irg/exec" method="POST">
+        <p class="contact-form-note">Schreib mir hier. Du bekommst einen Link per E-Mail, mit dem du deine Anfrage bestätigst.</p>
         <div class="contact-form-row">
-          <input type="text" name="name" placeholder="Dein Name" required autocomplete="name">
+          <input type="text" name="name" maxlength="100" placeholder="Dein Name" required autocomplete="name">
           <input type="email" name="email" placeholder="Deine E-Mail" required autocomplete="email">
         </div>
-        <textarea name="message" placeholder="Kurz dein Ziel, Ort und wann es zeitlich passt" required rows="4"></textarea>
-        <button type="submit" class="button primary">Nachricht senden <span>↗</span></button>
-        <p class="contact-form-status" role="status" aria-live="polite" hidden></p>
+        <textarea name="message" maxlength="1500" placeholder="Kurz dein Ziel, Ort und wann es zeitlich passt" required rows="4"></textarea>
+        <label><input style="width:auto" type="checkbox" name="newsletter" value="yes"> Ich möchte Daniels Newsletter mit Tipps und Angeboten zum Vitaltraining per E-Mail erhalten.</label>
+        <small>Freiwillig. Abmeldung jederzeit per E-Mail. <a href="/datenschutz.html">Datenschutz</a></small>
+        <button type="submit" class="button primary">Bestätigungsmail anfordern <span>↗</span></button>
       </form>
-      <iframe name="contact-target" hidden aria-hidden="true"></iframe>
     </section>
 </main>
 <footer><a class="brand" href="/"><span class="brand-mark">D</span><span>Daniel <b>Vitaltraining</b></span></a><p>Fitness · Ernährung · Entspannung · Prävention</p><div class="footer-links"><a href="mailto:nimmdaniel@gmail.com">nimmdaniel@gmail.com</a><nav class="legal-links" aria-label="Rechtliches"><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></nav></div></footer>
