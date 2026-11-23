@@ -6,9 +6,6 @@ name: Sync ChatGPT-Pakete (Vitaltrainer/website)
 # ausfällt. Import schreibt src/landingpage, src/vitalos (+ vitalos.html) und
 # die Trainer-Kernseiten aus website/dist. PR sync/gpt. automerge.yml merged
 # ihn bei grünem Check mit SYNC_TOKEN, damit deploy.yml danach läuft.
-#
-# Secret PUBLIC_DENYLIST: gleiche Komma-Liste wie in nimmsel23/Vitaltrainer.
-# Fehlt sie oder trifft sie src/, wird kein PR geöffnet.
 
 on:
   repository_dispatch:
@@ -71,11 +68,6 @@ jobs:
         run: |
           export GPT_PACKAGES_ROOT="$PWD/vault/website"
           node scripts/import-gpt-packages.mjs
-
-      - name: Öffentlich = anonym (Sperrliste)
-        env:
-          DENYLIST: ${{ secrets.PUBLIC_DENYLIST }}
-        run: bash .github/scripts/public-denylist.sh src
 
       - name: PR öffnen/aktualisieren
         run: |
