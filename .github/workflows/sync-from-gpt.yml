@@ -57,11 +57,13 @@ jobs:
 
       - name: Trainer-Kernseiten aus dist
         run: |
-          for f in index.html impressum.html datenschutz.html; do
-            cp "vault/website/dist/$f" "src/$f"
+          # Alle Trainer-Seiten aus dist; vitalos.html kommt aus vitalos-public, nicht aus dist.
+          for p in vault/website/dist/*.html; do
+            f=$(basename "$p")
+            [ "$f" = vitalos.html ] && continue
+            cp "$p" "src/$f"
+            sed -i 's#href="/vitalos.html"#href="/vitalos/"#g' "src/$f"
           done
-          # Clean-URL. /vitalos.html selbst kommt aus vitalos-public, nicht aus dist.
-          sed -i 's#href="/vitalos.html"#href="/vitalos/"#g' src/index.html
           node .github/scripts/apply-legal-floor.mjs
 
       - name: Pakete importieren (landingpage + vitalos-public)
