@@ -59,3 +59,36 @@ body.page .nav{position:static;background:var(--navy)}
 @media(max-width:480px){.consent{left:.6rem;right:.6rem;bottom:.6rem;max-width:none}}
 
 .pillars .pillar-subjects{margin:1.5rem 0 0;padding-top:1rem;border-top:1px solid var(--line);font-size:.78rem;line-height:1.7;color:#637d84}
+
+
+/* Standalone content pages and concise homepage sections. */
+.detail-page .nav { position: relative; background: var(--navy); }
+.detail-intro { padding: 70px 7vw 80px; background: var(--navy); color: white; }
+.detail-back { display: inline-block; margin-bottom: 3rem; color: #b9cbd2; font-size: .9rem; }
+.detail-intro h1 { max-width: 1100px; margin: 0; font: 800 clamp(2.8rem, 5.5vw, 5.5rem)/1.08 'Manrope', sans-serif; letter-spacing: -.04em; }
+.detail-intro h1 em { font-style: normal; color: var(--aqua); }
+.detail-intro .lead { max-width: 700px; margin-bottom: 0; }
+.detail-link { display: inline-block; margin-top: 1.5rem; font-weight: 700; text-decoration: underline; text-underline-offset: .3rem; }
+.landing-prices { background: #f7fbfa; }
+.landing-price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+.landing-price-grid article { padding: 2rem; background: white; border: 1px solid var(--line); }
+.landing-price-grid h3 { margin: 0; font: 700 1.4rem 'Manrope', sans-serif; }
+.landing-price-grid .landing-price { margin: 1rem 0; font: 800 3rem 'Manrope', sans-serif; color: #118576; }
+.landing-price-grid article > p:last-of-type { color: var(--muted); }
+.landing-price-grid a { font-weight: 700; }
+.first-session-list { padding-left: 1.2rem; color: #e0f2f0; }
+.first-session-list li { padding: .6rem 0; }
+.training .detail-link { color: var(--aqua); }
+.detail-page .offers-head h2 { font-size: clamp(2.5rem, 4.5vw, 4.4rem); }
+@media (max-width: 800px) {
+  .detail-page .nav nav { z-index: 20; }
+  .detail-intro { padding: 45px 6vw 65px; }
+  .detail-back { margin-bottom: 2rem; }
+  .landing-price-grid { grid-template-columns: 1fr; }
+}
+
+.reference-entry { max-width: 850px; border-top: 1px solid var(--line); padding: 2rem 0; }
+.reference-entry h2 { font: 700 clamp(1.8rem, 3vw, 2.8rem)/1.15 'Manrope', sans-serif; letter-spacing: -.03em; margin: 1rem 0; }
+.reference-entry .reference-meta { color: #118576; font-weight: 700; }
+.reference-entry p { color: var(--muted); }
+@media (min-width: 801px) and (max-width: 1200px) { .nav { padding: 0 3vw; } .nav nav { gap: .65rem; font-size: .76rem; } }
