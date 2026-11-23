@@ -1,17 +1,14 @@
 name: Sync ChatGPT-Pakete (Vitaltrainer/website)
 
 # ChatGPT (nimmdaniel) committed nach website/landingpage, website/vitalos-public
-# und website/dist. Vitaltrainer schickt bei so einem Push repository_dispatch
-# (vitaltrainer-website). Der tägliche Lauf bleibt das Netz, falls der Dispatch
-# ausfällt. Import schreibt src/landingpage, src/vitalos (+ vitalos.html) und
+# und website/dist. Dieser Sync holt sie täglich um 05:00 UTC (oder von Hand per
+# workflow_dispatch). Import schreibt src/landingpage, src/vitalos (+ vitalos.html) und
 # die Trainer-Kernseiten aus website/dist. PR sync/gpt. automerge.yml merged
 # ihn bei grünem Check mit SYNC_TOKEN, damit deploy.yml danach läuft.
 
 on:
-  repository_dispatch:
-    types: [vitaltrainer-website]
   schedule:
-    - cron: "0 5 * * *"   # täglich 05:00 UTC, Netz hinter dem Dispatch
+    - cron: "0 5 * * *"   # täglich 05:00 UTC
   workflow_dispatch:
 
 concurrency:
