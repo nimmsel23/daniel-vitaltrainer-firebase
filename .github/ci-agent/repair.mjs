@@ -159,6 +159,9 @@ if (!apiKey) error("Secret GEMINI_API_KEY fehlt.");
 
 let repairBranch = branch;
 if (createRepairPr) repairBranch = `ci-agent/repair/${run.id}-${run.run_attempt}`;
+// Branch schon weg (PR gemergt, Head-Branch geloescht) -> nichts mehr zu reparieren.
+const remoteHead = git(["-c", `http.https://github.com/.extraheader=${authHeader}`, "ls-remote", "--heads", "origin", branch], { allowFailure: true });
+if (typeof remoteHead !== "string" || !remoteHead) stop(`Branch ${branch} existiert nicht mehr (PR vermutlich gemergt); keine Reparatur.`);
 fetchRefs(branch, base);
 if (createRepairPr) {
   git(["checkout", "-B", repairBranch, `origin/${base}`]);

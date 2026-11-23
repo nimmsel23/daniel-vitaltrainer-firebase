@@ -3,7 +3,8 @@ name: Merge-Agent
 # Automatisches Mergen offener PRs auf die Ziel-Branches (TARGET_BRANCHES,
 # hier "master main" – in diesem Repo ist main der Default, in anderen Repos
 # z. B. master). Der Agent weist keine PRs ab und closed nie einen PR:
-# mergebar + vorhandene Checks gruen (oder keine Checks) -> Squash-Merge,
+# mergebar + alle Checks fertig und gruen (oder keine Checks) -> Squash-Merge,
+# laufende Checks -> warten,
 # Konflikte/rote Checks -> nur Kommentar, PR bleibt offen.
 # Token: SYNC_TOKEN (PAT mit Contents+Pull requests:write), damit ein Merge
 # deploy.yml ausloest; ohne SYNC_TOKEN faellt er auf GITHUB_TOKEN zurueck
@@ -64,6 +65,14 @@ jobs:
               conclusions=$(gh api "repos/$repo/commits/$sha/check-runs?per_page=100" --jq '[.check_runs[] | .conclusion] | join(" ")' 2>/dev/null || true)
               states=$(gh api "repos/$repo/commits/$sha/status?per_page=100" --jq '[.statuses[] | .state] | join(" ")' 2>/dev/null || true)
               failed=$(printf '%s %s\n' "$conclusions" "$states" | tr ' ' '\n' | grep -E '^(failure|cancelled|timed_out|error)$' || true)
+
+              # Laufende Checks (ausser diesem Job "merge") -> warten, nicht mergen.
+              # workflow_run auf Check bzw. der 15-Minuten-Lauf greift danach wieder.
+              running=$(gh api "repos/$repo/commits/$sha/check-runs?per_page=100" --jq '[.check_runs[] | select(.status != "completed" and .name != "merge")] | length' 2>/dev/null || echo 1)
+              if [ "$running" != "0" ] || printf '%s\n' "$states" | grep -qw pending; then
+                echo "Checks laufen noch – PR #$pr wird spaeter geprueft."
+                echo "::endgroup::"; continue
+              fi
 
               if [ -n "$failed" ]; then
                 comment "$pr" "Check rot – PR #$pr bleibt offen und wird nicht abgewiesen. Bitte Check fixen, der Agent merged danach automatisch."
