@@ -31,11 +31,7 @@ function expireContactRequests() {
 }
 
 function page(message) {
-  return HtmlService.createHtmlOutput('<html lang="de"><main style="font-family:sans-serif;max-width:560px;margin:3rem auto;padding:0 1.2rem;line-height:1.6"><h1>Vitaltraining mit Daniel</h1><p>' + message + '</p><p><a href="https://daniel-vitaltrainer.web.app/" target="_top">Zurück zur Website</a></p></main></html>').addMetaTag('viewport','width=device-width, initial-scale=1');
-}
-
-function notifyOwner(name, email, message) {
-  MailApp.sendEmail({to:OWNER, replyTo:email, subject:'Neue Anfrage Erstgespräch: ' + name, body:name + '\n' + email + '\n\n' + message});
+  return HtmlService.createHtmlOutput('<html lang="de"><main><h1>Vitaltraining mit Daniel</h1><p>' + message + '</p></main></html>').addMetaTag('viewport','width=device-width, initial-scale=1');
 }
 
 function doGet(e) {
@@ -57,25 +53,21 @@ function doPost(e) {
     if (!/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(email) || email.length > 254 || !name || name.length > 100 || !message || message.length > 1500) {
       return page('Bitte prüfe deine Eingaben und versuche es erneut.');
     }
-    if (p.website) return page('Danke! Deine Anfrage ist bei mir angekommen.'); // Honeypot gegen Bots
     return locked(store => {
       const now = Date.now();
       const rateKey = 'limit:' + digest(email.toLowerCase());
-      if (Number(store.getProperty(rateKey)) > now) return page('Deine Anfrage ist bereits bei mir. Ich melde mich persönlich bei dir.');
+      if (Number(store.getProperty(rateKey)) > now) return page('Bitte prüfe dein Postfach oder versuche es in 15 Minuten erneut.');
       if (MailApp.getRemainingDailyQuota() < 2) return page('Der Versand ist gerade nicht möglich. Schreib direkt an ' + OWNER + '.');
-      // Anfrage geht sofort an Daniel; Double-Opt-in nur für den Newsletter.
-      notifyOwner(name, email, message);
-      store.setProperty(rateKey, String(now + 900000));
-      const newsletter = p.newsletter === 'yes';
-      if (!newsletter) return page('Danke, ' + name.replace(/[<>&"]/g, '') + '! Deine Anfrage ist bei mir angekommen. Ich melde mich persönlich bei dir, meist innerhalb von zwei Werktagen.');
       const token = Utilities.getUuid();
       const key = 'pending:' + digest(token);
+      const newsletter = p.newsletter === 'yes';
       const link = ScriptApp.getService().getUrl() + '?token=' + token;
-      store.setProperty(key, JSON.stringify({email,name,newsletter:true,requested:now,expires:now+DAY}));
+      store.setProperty(key, JSON.stringify({email,name,message,newsletter,requested:now,expires:now+DAY}));
       try {
-        MailApp.sendEmail(email, 'Bitte bestätige deine Newsletter-Anmeldung', 'Über das Vitaltrainer-Formular wurde diese Newsletter-Anmeldung gewählt: ' + CONSENT + '\n\nFalls das von dir stammt, öffne den Link und bestätige dort innerhalb von 24 Stunden:\n' + link + '\n\nSonst kannst du diese E-Mail ignorieren. Deine Anfrage ist unabhängig davon bereits bei Daniel angekommen.');
-      } catch (error) { store.deleteProperty(key); }
-      return page('Danke! Deine Anfrage ist bei mir angekommen. Für den Newsletter schicke ich dir noch eine Bestätigungsmail.');
+        MailApp.sendEmail(email, 'Bitte bestätige deine Anfrage an Daniel', 'Über das Vitaltrainer-Formular wurde deine Adresse angegeben.\n\n' + (newsletter ? 'Zusätzlich wurde diese Newsletter-Anmeldung gewählt: ' + CONSENT + '\n\n' : '') + 'Falls das von dir stammt, öffne den Link und bestätige dort innerhalb von 24 Stunden:\n' + link + '\n\nSonst kannst du diese E-Mail ignorieren.');
+      } catch (error) { store.deleteProperty(key); throw error; }
+      store.setProperty(rateKey, String(now + 900000));
+      return page('Bitte öffne die Bestätigungsmail und bestätige dort deine Anfrage. Schau gegebenenfalls im Spamordner nach.');
     });
   } catch (error) { return page('Das hat gerade nicht geklappt. Versuche es später erneut oder schreib an ' + OWNER + '.'); }
 }
@@ -91,8 +83,8 @@ function confirmRequest(token) {
       const id = 'subscriber:' + digest(r.email.toLowerCase());
       if (!store.getProperty(id)) store.setProperty(id, JSON.stringify({email:r.email, source:'Vitaltrainer-Kontaktformular', consent:CONSENT, requested:r.requested, confirmed:Date.now()}));
     }
-    if (r.message) MailApp.sendEmail({to:OWNER, replyTo:r.email, subject:'Bestätigte Vitaltraining-Anfrage', body:r.name + '\n' + r.email + '\n\n' + r.message}); // alte, noch offene Anfragen
+    MailApp.sendEmail({to:OWNER, replyTo:r.email, subject:'Bestätigte Vitaltraining-Anfrage', body:r.name + '\n' + r.email + '\n\n' + r.message});
     store.deleteProperty(key);
-    return page(r.newsletter ? 'Danke! Deine Newsletter-Anmeldung ist bestätigt. Abmeldung jederzeit per E-Mail an ' + OWNER + '.' : 'Danke! Deine Anfrage ist bestätigt und an Daniel versendet.');
+    return page(r.newsletter ? 'Danke! Deine Anfrage ist versendet und deine Newsletter-Anmeldung ist bestätigt. Abmeldung jederzeit per E-Mail an ' + OWNER + '.' : 'Danke! Deine Anfrage ist bestätigt und an Daniel versendet.');
   });
 }
