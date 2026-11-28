@@ -92,3 +92,5 @@ body.page .nav{position:static;background:var(--navy)}
 .reference-entry .reference-meta { color: #118576; font-weight: 700; }
 .reference-entry p { color: var(--muted); }
 @media (min-width: 801px) and (max-width: 1200px) { .nav { padding: 0 3vw; } .nav nav { gap: .65rem; font-size: .76rem; } }
+
+.hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0}.contact-alt{margin:1.6rem auto 0;color:#bcd0d7;font-size:.92rem}.contact-alt a{color:#fff;border-bottom:1px solid #ffffff55}.price-note{margin:-.4rem 0 .8rem!important;color:#118576!important;font-weight:700;font-size:.92rem}.price-cta{margin-top:1.5rem;padding:1.6rem 2rem;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}.price-cta p{margin:0;color:#c3d5da;max-width:560px}.price-cta b{color:#fff}.training-copy .button{margin-top:.5rem}@media(max-width:800px){.landing-price-grid{grid-template-columns:1fr}.price-cta{padding:1.4rem}}
