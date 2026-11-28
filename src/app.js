@@ -37,9 +37,25 @@ document.addEventListener("click", (event) => {
 
 const contactForm = document.getElementById("contact-form");
 contactForm?.addEventListener("focusin", () => track("contact_form_start"), { once: true });
-contactForm?.addEventListener("submit", () =>
-  track("generate_lead", { form: "kontakt", newsletter: contactForm.newsletter?.checked ? "ja" : "nein" })
-);
+// Für den Newsletter ist die E-Mail Pflicht, sonst nicht.
+contactForm?.newsletter?.addEventListener("change", () => {
+  contactForm.email.required = contactForm.newsletter.checked;
+});
+// Herkunft der Anfrage ohne Cookies: UTM-Quelle oder verweisende Website, sonst "direkt".
+const requestSource = () => {
+  const utm = new URLSearchParams(location.search).get("utm_source");
+  if (utm) return utm;
+  try {
+    const ref = new URL(document.referrer).hostname;
+    if (ref && ref !== location.hostname) return ref.replace(/^www\./, "");
+  } catch { /* kein Referrer */ }
+  return "direkt";
+};
+contactForm?.addEventListener("submit", () => {
+  if (contactForm.src) contactForm.src.value = requestSource();
+  if (contactForm.page) contactForm.page.value = location.pathname;
+  track("generate_lead", { form: "kontakt", newsletter: contactForm.newsletter?.checked ? "ja" : "nein" });
+});
 
 const pricing = document.querySelector("#dienstleistungsangebot, .service-pricing");
 if (pricing && "IntersectionObserver" in window) {

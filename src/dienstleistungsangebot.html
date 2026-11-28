@@ -88,19 +88,21 @@
 <section class="cta" id="kontakt">
       <p class="eyebrow">Kontakt</p>
       <h2>Lernen wir<br><em>uns kennen.</em></h2>
-      <p>Schreib mir, womit du starten willst, wo du trainieren möchtest und wann du Zeit hast. Nach dem Absenden bekommst du eine Bestätigungsmail. Erst mit deinem Klick darauf erreicht mich deine Anfrage, dann melde ich mich persönlich bei dir.</p>
+      <p>Schreib mir, womit du starten willst, wo du trainieren möchtest und wann du Zeit hast. Nach dem Absenden bestätigst du deine Anfrage mit einer vorbereiteten Nachricht per WhatsApp oder SMS. Erst dann erreicht sie mich, und ich melde mich persönlich bei dir.</p>
 
 
       <form id="contact-form" class="contact-form" action="https://script.google.com/macros/s/AKfycbxQeetIZ3UjZxh6uBBsFR9e53VtXGbhkPXOy0wbmSj-Y5ham3T1Tq5BhU8_BMP-6b3Irg/exec" method="POST">
         <p class="contact-form-note">Training anfragen</p>
         <div class="contact-form-row">
           <input type="text" name="name" maxlength="100" placeholder="Dein Name" required autocomplete="name">
-          <input type="email" name="email" placeholder="Deine E-Mail" required autocomplete="email">
+          <input type="email" name="email" placeholder="E-Mail (optional)" autocomplete="email">
         </div>
         <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="hidden" name="src">
+        <input type="hidden" name="page">
         <textarea name="message" maxlength="1500" placeholder="Dein Ziel (z. B. mehr Kraft, wieder fit nach einer Pause), Wunschort und wann es dir passt" required rows="4"></textarea>
         <label><input style="width:auto" type="checkbox" name="newsletter" value="yes"> Ich möchte Daniels Newsletter mit Tipps und Angeboten zum Vitaltraining per E-Mail erhalten.</label>
-        <small>Freiwillig. Abmeldung jederzeit per E-Mail. <a href="/datenschutz.html">Datenschutz</a></small>
+        <small>Freiwillig, dafür brauche ich deine E-Mail. Abmeldung jederzeit per E-Mail. <a href="/datenschutz.html">Datenschutz</a></small>
         <button type="submit" class="button primary">Anfrage senden <span>↗</span></button>
       </form>
       <p class="contact-alt">Lieber direkt? <a href="tel:+4367761506077">0677 / 615 060 77</a> · <a href="mailto:nimmdaniel@gmail.com?subject=Anfrage%20Vitaltraining">nimmdaniel@gmail.com</a></p>
